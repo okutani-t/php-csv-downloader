@@ -1,13 +1,6 @@
 <?php
 /**
  * CSVのダウンロードを行うクラス
- * 使い方
- * 1. $csv = new CsvDownLoader();
- * 2. $csv->setFileName("ファイル名"); #.csvがついてなくても自動で付与されます
- * 3. $csv->setHeadList(ヘッダーのリスト);
- * 4. $csv->setRecords(レコードのリスト); #レコードが1つでも必ず2次元配列で渡す
- * 5. $csv->sortRecordsByUsingKeys(レコードのKEY名); #レコードが連想配列だった場合利用
- * 6. $csv->run();
  *
  * @access public
  * @author okutani
@@ -24,6 +17,14 @@ class CsvDownLoader
     private $fName   = "";
     private $hList   = array();
     private $records = array();
+
+    /**
+     * 自身のインスタンスを生成
+     * @access public
+     */
+    public static function _() {
+        return new self;
+    }
 
     /**
      * ファイル名を追加するセッター

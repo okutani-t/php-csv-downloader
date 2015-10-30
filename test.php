@@ -11,12 +11,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 array("id"=>3,"name"=>"nakano")
             );
 
-    $csv = new CsvDownLoader();
-    $csv->setFileName("test-csv")
-        ->setHeadList(array("name","id"))
-        ->setRecords($records)
-        ->sortRecordsByUsingKeys("name","id")
-        ->execute();
+    CsvDownLoader::_()->setFileName("test-csv")
+                      ->setHeadList(array("name","id"))
+                      ->setRecords($records)
+                      ->sortRecordsByUsingKeys("name","id")
+                      ->execute();
     exit;
 }
 
