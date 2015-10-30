@@ -33,7 +33,7 @@ class CsvDownLoader
         // CSV初期設定
         ini_set('memory_limit', '256M');
         header('Content-Type: application/octet-stream; charset=Shift_JIS');
-        header('Content-Disposition: attachment; filename=' . "{$this->fName}");
+        header('Content-Disposition: attachment; filename='.$this->fName);
         header('Content-Transfer-Encoding: binary');
         header('Cache-Control: public');
         header('Pragma: public');
