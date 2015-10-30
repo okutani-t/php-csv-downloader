@@ -12,11 +12,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             );
 
     $csv = new CsvDownLoader();
-    $csv->addFileName("test-csv"); #.csvがついてなくても自動で付与されます
-    $csv->addHeadList(array("name","id"));
-    $csv->addRecords($records);
-    $csv->sortRecordsByUsingKeys("name","id");
-    $csv->runCsvDl();
+    $csv->setFileName("test-csv")
+        ->setHeadList(array("name","id"))
+        ->setRecords($records)
+        ->sortRecordsByUsingKeys("name","id")
+        ->execute();
     exit;
 }
 

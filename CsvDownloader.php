@@ -3,11 +3,11 @@
  * CSVのダウンロードを行うクラス
  * 使い方
  * 1. $csv = new CsvDownLoader();
- * 2. $csv->addFileName("ファイル名"); #.csvがついてなくても自動で付与されます
- * 3. $csv->addHeadList(ヘッダーのリスト);
- * 4. $csv->addRecords(レコードのリスト); #レコードが1つでも必ず2次元配列で渡す
+ * 2. $csv->setFileName("ファイル名"); #.csvがついてなくても自動で付与されます
+ * 3. $csv->setHeadList(ヘッダーのリスト);
+ * 4. $csv->setRecords(レコードのリスト); #レコードが1つでも必ず2次元配列で渡す
  * 5. $csv->sortRecordsByUsingKeys(レコードのKEY名); #レコードが連想配列だった場合利用
- * 6. $csv->runCsvDl();
+ * 6. $csv->run();
  *
  * @access public
  * @author okutani
@@ -16,20 +16,114 @@
  */
 class CsvDownLoader
 {
-    private $fName = "";
-    private $hList = array();
+    /**
+     * @var string $fName CSVファイルの名前
+     * @var array $hList 出力されるヘッダーのリスト
+     * @var array $records 出力されるレコードのリスト
+     */
+    private $fName   = "";
+    private $hList   = array();
     private $records = array();
+
+    /**
+     * ファイル名を追加するセッター
+     *
+     * @access public
+     * @param string $fName 保存したいファイル名を入力
+     * @return object $this
+     */
+    public function setFileName($fName="")
+    {
+        // 空チェック
+        if ($fName === "") trigger_error("empty fName!", E_USER_NOTICE);
+        // .csvが入っていなかったら添付
+        if (!preg_match("/.+\.csv/", $fName)) {
+            $fName .= ".csv";
+        }
+
+        $this->fName = $fName;
+
+        return $this;
+    }
+
+    /**
+     * ヘッダー情報を追加するセッター
+     *
+     * @access public
+     * @param array $hList ヘッダーが格納された配列を入力
+     */
+    public function setHeadList($hList=array())
+    {
+        $this->hList = $hList;
+
+        return $this;
+    }
+
+    /**
+     * レコード情報を追加するセッター
+     * レコードが1つでも必ず2次元配列で渡す
+     *
+     * @access public
+     * @param array $records 2次元で渡す
+     */
+    public function setRecords($records=array())
+    {
+        $this->records = $records;
+
+        return $this;
+    }
+
+    /**
+     * 連想配列を使ったレコードをソートする関数
+     * sortRecordsByUsingKeys("hoge","huga","piyo")とすることで、その順番で連想配列をソーティングする
+     * 呼び出し前にsetRecords()しておく必要がある
+     * setHeadList()でセットするヘッダーの順番と同じにしておくと良い
+     *
+     * @access public
+     * @param string $key_names 複数の引数を渡せる
+     * @return object $this
+     */
+    public function sortRecordsByUsingKeys(/*key_names*/)
+    {
+        $key_names = func_get_args();
+        // エラー処理
+        if (empty($key_names)) {
+            trigger_error("empty keys!", E_USER_ERROR);
+            return;
+        }
+        if (empty($this->records)) {
+            trigger_error("empty records!", E_USER_ERROR);
+            return;
+        }
+
+        $i = 0;
+        foreach ($this->records as $record) {
+            for($j = 0; $j < count($key_names); $j++){
+                $rm_key_records[$i][] = $record[$key_names[$j]];
+            }
+            $i++;
+        }
+
+        $this->records = $rm_key_records;
+
+        return $this;
+    }
+
     /**
      * CSVダウンロード実行部
      *
      * @access public
      */
-    public function runCsvDl()
+    public function execute()
     {
-        // 引数が空ならreturn
-        if ($this->fName == "" || empty($this->hList) || empty($this->records)) return;
+        // 空チェック
+        if ($this->fName === "" || empty($this->hList) || empty($this->records)) {
+            trigger_error("empty fName or hList or records!", E_USER_NOTICE);
+        }
+
         // ヘッダーとレコードのエンコーディング処理
         $this->csvEcoding();
+
         // CSV初期設定
         ini_set('memory_limit', '256M');
         header('Content-Type: application/octet-stream; charset=Shift_JIS');
@@ -37,9 +131,11 @@ class CsvDownLoader
         header('Content-Transfer-Encoding: binary');
         header('Cache-Control: public');
         header('Pragma: public');
-        // ヘッダー項目の出力
+
+        // ヘッダーの書き出し
         echo $this->hList;
-        // メインの内容の出力
+
+        // レコードの書き出し
         foreach($this->records as $value){
             echo $value;
         }
@@ -62,75 +158,6 @@ class CsvDownLoader
         for ($i = 0; $i < count($this->records); $i++) {
             $this->records[$i] = $encoder($this->records[$i]);
         }
-    }
-
-    /**
-     * 保存するファイル名を追加するセッター
-     *
-     * @access public
-     * @param string $fName 保存するファイル名を入力
-     */
-    public function addFileName($fName="")
-    {
-        if (!preg_match("/.+\.csv/", $fName)) {
-            $fName .= ".csv";
-        }
-        $this->fName = $fName;
-    }
-
-    /**
-     * ヘッダー情報を追加するセッター
-     *
-     * @access public
-     * @param array $hList ヘッダーが格納された配列を入力
-     */
-    public function addHeadList($hList=array())
-    {
-        $this->hList = $hList;
-    }
-
-    /**
-     * レコード情報を追加するセッター
-     * レコードが1つでも必ず2次元配列で渡す
-     *
-     * @access public
-     * @param array $records 2次元で渡す
-     */
-    public function addRecords($records=array())
-    {
-        $this->records = $records;
-    }
-
-    /**
-     * 連想配列のキー名を元にソートするセッター
-     * sortRecordsByUsingKeys("hoge","huga","piyo")とすることで、その順番で連想配列をソーティングする
-     * 呼び出し前にaddRecords()しておく必要がある
-     * addHeadList()でセットするヘッダーの順番と同じにしておく
-     *
-     * @access public
-     * @param string $key_names args複数の文字列を渡せる
-     */
-    public function sortRecordsByUsingKeys(/*key_names*/)
-    {
-        $key_names = func_get_args();
-        // エラー処理
-        if (empty($key_names)) {
-            trigger_error("empty keys!", E_USER_ERROR);
-            return;
-        }
-        if (empty($this->records)) {
-            trigger_error("empty records!", E_USER_ERROR);
-            return;
-        }
-
-        $i = 0;
-        foreach ($this->records as $record) {
-            for($j = 0; $j < count($key_names); $j++){
-                $rm_key_records[$i][] = $record[$key_names[$j]];
-            }
-            $i++;
-        }
-        $this->records = $rm_key_records;
     }
 
 }
