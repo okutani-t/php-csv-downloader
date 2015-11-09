@@ -8,7 +8,7 @@ PHPで使えるCSVのダウンローダー
 
 ```php
 // CsvDownloader読み込み
-require_once(__DIR__."/CsvDownLoader.php");
+require_once(__DIR__."/CsvDownLoader.class.php");
 
 CsvDownLoader::_()->setFileName("ファイル名") #.csvがついてなくても自動で付与されます
                   ->setHeadList(ヘッダーのリスト)
@@ -17,10 +17,12 @@ CsvDownLoader::_()->setFileName("ファイル名") #.csvがついてなくても
                   ->execute();
 exit;
 ```
+
+### 使用例
+
 ```php
-// sample
 // CsvDownloader読み込み
-require_once(__DIR__."/CsvDownLoader.php");
+require_once(__DIR__."/CsvDownLoader.class.php");
 
 // POST時動作
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -42,4 +44,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 連想配列じゃなくても問題なく動作します。
 
-author: okutani
+okutani

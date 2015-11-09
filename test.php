@@ -1,6 +1,6 @@
 <?php
 // CsvDownloader読み込み
-require_once(__DIR__."/CsvDownLoader.php");
+require_once(__DIR__."/CsvDownLoader.class.php");
 
 // POST時動作
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
