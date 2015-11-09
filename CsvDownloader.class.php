@@ -21,6 +21,7 @@ class CsvDownLoader
     /**
      * 自身のインスタンスを生成
      * @access public
+     * @return object new self
      */
     public static function _() {
         return new self;
