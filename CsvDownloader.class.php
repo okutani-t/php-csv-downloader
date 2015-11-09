@@ -101,12 +101,12 @@ class CsvDownLoader
         $i = 0;
         foreach ($this->records as $record) {
             for($j = 0; $j < count($key_names); $j++){
-                $rm_key_records[$i][] = $record[$key_names[$j]];
+                $rmKeyRecords[$i][] = $record[$key_names[$j]];
             }
             $i++;
         }
 
-        $this->records = $rm_key_records;
+        $this->records = $rmKeyRecords;
 
         return $this;
     }
