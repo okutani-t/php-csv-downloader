@@ -13,7 +13,7 @@ require_once(__DIR__."/CsvDownLoader.class.php");
 CsvDownLoader::_()->setFileName("ファイル名") #.csvがついてなくても自動で付与されます
                   ->setHeadList(ヘッダーのリスト)
                   ->setRecords(レコードのリスト) #レコードが1つでも必ず2次元配列で渡してください
-                  ->sortRecordsByUsingKeys(レコードのKEY名...) #レコードが連想配列だった場合利用します
+                  ->sortRecordsByUsingKeys(レコードのKEY名のリスト) #レコードが連想配列だった場合利用します
                   ->execute();
 exit;
 ```
@@ -34,9 +34,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             );
 
     CsvDownLoader::_()->setFileName("test-csv")
-                      ->setHeadList(array("name","id"))
+                      ->setHeadList(array("名前","ID"))
                       ->setRecords($records)
-                      ->sortRecordsByUsingKeys("name","id")
+                      ->sortRecordsByUsingKeys(array("name","id"))
                       ->execute();
     exit;
 }

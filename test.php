@@ -12,9 +12,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             );
 
     CsvDownLoader::_()->setFileName("test-csv")
-                      ->setHeadList(array("name","id"))
+                      ->setHeadList(array("名前","ID"))
                       ->setRecords($records)
-                      ->sortRecordsByUsingKeys("name","id")
+                      ->sortRecordsByUsingKeys(array("name","id"))
                       ->execute();
     exit;
 }
